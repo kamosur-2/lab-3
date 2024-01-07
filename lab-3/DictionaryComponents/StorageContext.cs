@@ -11,6 +11,8 @@ public class StorageContext : DbContext
         var folder = Environment.SpecialFolder.LocalApplicationData;
         var path = Environment.GetFolderPath(folder);
         DbPath = Path.Join(path, "blogging.db");
+        Console.WriteLine("Iiiiiiiii:   ");
+        Console.WriteLine(DbPath);
     }
 
     // The following configures EF to create a Sqlite database file in the
@@ -43,17 +45,20 @@ public class StorageContext : DbContext
         {
             if (root is not null)
             {
-                this.Add(new Word(prefix, root, postfix, word, JSONDictionary.HashWord(word)));
+                var w = new Word(prefix, root, postfix, word, JSONDictionary.HashWord(word));
+                this.Add(w);
                 this.SaveChanges();
                 Console.Write("Слово ");
-                PrintWord(new Word(prefix, root, postfix, word, JSONDictionary.HashWord(word)));
+                PrintWord(w);
                 Console.WriteLine(" добавлено в базу данных");
             }
-            else
-            {
-                Console.WriteLine("слово по частям не соответсвует изначально введенному слову и не может быть добавлено в базу данных");
-            }
         }
+        else
+        {
+            Console.WriteLine(
+                "слово по частям не соответсвует изначально введенному слову и не может быть добавлено в базу данных");
+        }
+
     }
     
     private List<string> PostPrefBuild(string part)

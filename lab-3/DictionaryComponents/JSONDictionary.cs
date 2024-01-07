@@ -1,5 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
+using WebAPIApp.Controllers;
+
 namespace lab_2.DictionaryComponents;
 
 public class JSONDictionary : IStorage
@@ -69,7 +71,7 @@ public class JSONDictionary : IStorage
         return result;
     }
 
-    public void AddNewWord(string word, StorageContext storageContext)
+    public void AddNewWord(string word, StorageController controller)
     {
         var prefix = PostPrefBuild("приставка: ");
         Console.WriteLine("корень");
@@ -100,7 +102,8 @@ public class JSONDictionary : IStorage
 
                     var wordToAdd = new Word(prefix, root, postfix, word, HashWord(word));
                     list.Add(JsonSerializer.Serialize(wordToAdd));
-                    storageContext.AddNewWord(word);
+                    //storageContext.AddNewWord(word);
+                    controller.Post(new Word(prefix, root, postfix, word, HashWord(word)));
                     Storage.Add(list);
                     Storage[^1].OrderBy(p => JsonSerializer.Deserialize<Word>(p).fullWord);
                 }
@@ -111,6 +114,13 @@ public class JSONDictionary : IStorage
                 Console.Write("Слово ");
                 SingleRootWordsDictionary.PrintWord(new Word(prefix, root, postfix, word, HashWord(word)));
                 Console.WriteLine(" добавлено");
+                var f = controller.Get();
+                List<Word> l = (List<Word>)f.Result.Value;
+                Console.WriteLine("Результат Get() запроса: ");
+                foreach (var VARIABLE in l)
+                {
+                    Console.WriteLine(VARIABLE.fullWord);
+                }
             }
             else
             {

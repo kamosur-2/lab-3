@@ -1,6 +1,7 @@
 ﻿using lab_2.DictionaryComponents;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
+using WebAPIApp.Controllers;
 
 namespace lab_2;
 
@@ -12,6 +13,7 @@ public class Class1
         var jsonDictionary = new JSONDictionary();
         var xmlDictionary = new XMLDictionary();
         var storageContext = new StorageContext();
+        var storageController = new StorageController(storageContext);
         var word = string.Empty;
         while (word != "q")
         {
@@ -42,7 +44,7 @@ public class Class1
                 string ans = Console.ReadLine();
                 if (ans == "y")
                 {
-                    dictionary.AddNewWord(word, storageContext);
+                    dictionary.AddNewWord(word, storageController);
                 }
             }
             else

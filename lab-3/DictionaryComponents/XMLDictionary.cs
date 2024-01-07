@@ -1,4 +1,5 @@
 using System.Xml.Serialization;
+using WebAPIApp.Controllers;
 
 namespace lab_2.DictionaryComponents;
 
@@ -46,7 +47,7 @@ public class XMLDictionary : IStorage
         return null;
     }
 
-    public void AddNewWord(string word, StorageContext storageContext)
+    public void AddNewWord(string word, StorageController controller)
     {
         var prefix = PostPrefBuild("приставка: ");
         Console.WriteLine("корень");
@@ -78,7 +79,7 @@ public class XMLDictionary : IStorage
                     mySerializer.Serialize(myWriter, new Word(prefix, root, postfix, word, JSONDictionary.HashWord(word)));
                     list.Add($"{word}.xml");
                     Storage.Add(list);
-                    storageContext.AddNewWord(word);
+                    controller.Post(new Word(prefix, root, postfix, word, JSONDictionary.HashWord(word)));
                     using var myFileStream = new FileStream($"{word}.xml", FileMode.Open);
                     Storage[^1].OrderBy(p => ((Word)mySerializer.Deserialize(myFileStream)).fullWord);
                 }
@@ -89,6 +90,13 @@ public class XMLDictionary : IStorage
                 Console.Write("Слово ");
                 PrintWord(new Word(prefix, root, postfix, word, JSONDictionary.HashWord(word)));
                 Console.WriteLine(" добавлено");
+                var f = controller.Get();
+                List<Word> l = (List<Word>)f.Result.Value;
+                Console.WriteLine("Результат Get() запроса: ");
+                foreach (var VARIABLE in l)
+                {
+                    Console.WriteLine(VARIABLE.fullWord);
+                }
             }
             else
             {
