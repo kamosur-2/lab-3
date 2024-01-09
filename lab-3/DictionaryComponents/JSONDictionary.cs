@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using WebAPIApp.Controllers;
 
 namespace lab_2.DictionaryComponents;
@@ -7,11 +8,17 @@ namespace lab_2.DictionaryComponents;
 public class JSONDictionary : IStorage
 {
     public List<List<string>> Storage { get; } = new List<List<string>>();
+
+    public JSONDictionary(List<List<string>> storage)
+    {
+        Storage = storage;
+    }
     
     public IList<Word>? WordSearch(string word)
     {
         foreach (var singleRootCollection in Storage)
         {
+            var t = new Word(new List<string>(), " ", new List<string>(), JsonSerializer.Deserialize<Word>(singleRootCollection[0])?.fullWord, 33);
             if (singleRootCollection.Any(i => JsonSerializer.Deserialize<Word>(i).fullWord == word))
             {
                 List<Word> words = new List<Word>();
@@ -71,7 +78,7 @@ public class JSONDictionary : IStorage
         return result;
     }
 
-    public void AddNewWord(string word, StorageController controller)
+    public void AddNewWord(string word, IController controller)
     {
         var prefix = PostPrefBuild("приставка: ");
         Console.WriteLine("корень");
@@ -102,8 +109,7 @@ public class JSONDictionary : IStorage
 
                     var wordToAdd = new Word(prefix, root, postfix, word, HashWord(word));
                     list.Add(JsonSerializer.Serialize(wordToAdd));
-                    //storageContext.AddNewWord(word);
-                    controller.Post(new Word(prefix, root, postfix, word, HashWord(word)));
+                    Post(controller, new Word(prefix, root, postfix, word, HashWord(word)));
                     Storage.Add(list);
                     Storage[^1].OrderBy(p => JsonSerializer.Deserialize<Word>(p).fullWord);
                 }
@@ -112,9 +118,9 @@ public class JSONDictionary : IStorage
                     RootSearch(root).Add(new Word(prefix, root, postfix, word, HashWord(word)));
                 }
                 Console.Write("Слово ");
-                SingleRootWordsDictionary.PrintWord(new Word(prefix, root, postfix, word, HashWord(word)));
+                //SingleRootWordsDictionary.PrintWord(new Word(prefix, root, postfix, word, HashWord(word)));
                 Console.WriteLine(" добавлено");
-                var f = controller.Get();
+                var f = Get(controller);
                 List<Word> l = (List<Word>)f.Result.Value;
                 Console.WriteLine("Результат Get() запроса: ");
                 foreach (var VARIABLE in l)
@@ -127,5 +133,15 @@ public class JSONDictionary : IStorage
                 Console.WriteLine("слово по частям не соответсвует изначально введенному слову");
             }
         }
+    }
+
+    public Task<ActionResult<IEnumerable<Word>>> Get(IController controller)
+    {
+        return controller.Get();
+    }
+
+    public Task<ActionResult<Word>> Post(IController controller, Word word)
+    {
+        return controller.Post(word);
     }
 }

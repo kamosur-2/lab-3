@@ -7,10 +7,21 @@ namespace lab_2;
 
 public class Class1
 {
+    public Class1(IStorage storage)
+    {
+        Store = storage;
+    }
+
+    public Class1()
+    {
+        
+    }
+    
+    public IStorage Store { get; }
     public static void Start()
     {
         var wordsDictionary = new SingleRootWordsDictionary(new List<List<Word>>());
-        var jsonDictionary = new JSONDictionary();
+        var jsonDictionary = new JSONDictionary(new List<List<string>>());
         var xmlDictionary = new XMLDictionary();
         var storageContext = new StorageContext();
         var storageController = new StorageController(storageContext);
@@ -76,5 +87,30 @@ public class Class1
 
         }
         Console.WriteLine(word.Postfix[^2]);
+    }
+
+    public void Add(string word, StorageController storageController)
+    {
+        Store.AddNewWord(word, storageController);
+    }
+    
+    public void StartForTest(string num, string word)
+    {
+        
+        var storageContext = new StorageContext();
+        var storageController = new StorageController(storageContext);
+        
+        if (Store.WordSearch(word) is null) 
+        { 
+            Store.AddNewWord(word, storageController);
+        }
+        else 
+        { 
+            var collection = Store.WordSearch(word); 
+            foreach (var i in collection) 
+            { 
+                PrintWord(i);
+            }
+        }
     }
 }

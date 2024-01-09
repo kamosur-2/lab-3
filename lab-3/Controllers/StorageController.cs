@@ -7,7 +7,7 @@ namespace WebAPIApp.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class StorageController : ControllerBase
+    public class StorageController : ControllerBase, IController
     {
         public StorageController(StorageContext context)
         {

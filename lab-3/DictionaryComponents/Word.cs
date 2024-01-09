@@ -22,4 +22,9 @@ public record Word
     public IList<string> Postfix { get; }
     
     public string fullWord { get; }
+
+    public void Print()
+    {
+        Console.WriteLine(this.fullWord);
+    }
 }

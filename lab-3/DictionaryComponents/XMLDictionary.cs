@@ -47,7 +47,7 @@ public class XMLDictionary : IStorage
         return null;
     }
 
-    public void AddNewWord(string word, StorageController controller)
+    public void AddNewWord(string word, IController controller)
     {
         var prefix = PostPrefBuild("приставка: ");
         Console.WriteLine("корень");
